@@ -1,0 +1,154 @@
+.Right-Body {
+  border-radius: 19px;
+  box-shadow: -4px 5px 31px 0px rgba(0, 0, 0, 0.11);
+  height: 600px;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  background-color: white;
+}
+/* .Right-Body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #f5f5f5;
+  border-left: 1px solid #ddd;
+} */
+
+.Chat-Header {
+  padding: 5px 10px;
+  background-color: #8d11d8;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  display: none;
+}
+
+.Chat-Header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 200;
+}
+
+.online-users {
+  font-size: 0.9rem;
+  color: #ecf0f1;
+}
+
+.Chat-Body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  width: 90%;
+}
+
+.chat-box {
+  flex: 1;
+  overflow-y: auto;
+  background-color: #fff;
+}
+
+.message {
+  margin-bottom: 15px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  max-width: 80%;
+  width: max-content;
+  word-wrap: break-word;
+  font-size: 0.9rem;
+}
+
+.message.user_message {
+  background-color: #e9e3fd;
+  margin-right: auto;
+  margin-left: 0;
+}
+.message.my_message {
+  background-color: #f2ffec;
+  margin-left: auto;
+  margin-right: 0;
+  color: rgb(33, 33, 33);
+}
+
+.message.system {
+  background-color: #f1f1f1;
+  text-align: center;
+  margin: 10px auto;
+  padding: 5px 10px;
+  font-size: 0.9rem;
+}
+
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  gap: 10px;
+}
+.message.my_message .sender {
+  color: #5fb655;
+}
+.message.my_message .timestamp {
+  font-size: 0.6rem;
+  color: #7f8c8d;
+}
+
+.message.user_message .sender {
+  font-weight: bold;
+  color: #a200ff; 
+}
+
+.message.user_message .timestamp {
+  font-size: 0.6rem;
+  color: #7f8c8d;
+}
+
+.message-content {
+  line-height: 1.4;
+  text-align: start;
+}
+
+.input-container {
+  display: flex;
+  margin-bottom: 24px;
+}
+
+.input-container input {
+  width: 74%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  margin-right: 10px;
+  font-size: 0.8rem;
+}
+
+.input-container button {
+  padding: 5px 10px;
+  background-color: #8c00dd;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.input-container button:disabled {
+  /* background-color: #95a5a6; */
+  cursor: not-allowed;
+}
+
+.typing-indicator {
+  padding: 5px 15px;
+  font-size: 0.8rem;
+  color: #7f8c8d;
+  font-style: italic;
+}
+
+.system-message {
+  color: #7f8c8d;
+}

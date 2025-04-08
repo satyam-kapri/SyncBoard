@@ -1,0 +1,10 @@
+#left-header{
+    border-radius: 10px;
+    background-color: white;
+    box-shadow: 11px 7px 48px 7px rgba(0, 0, 0, 0.11);
+    padding: 10px 80px;
+    font-family: "Londrina Solid", sans-serif;
+    font-size: 32px;
+    margin-left: 50px;
+
+}

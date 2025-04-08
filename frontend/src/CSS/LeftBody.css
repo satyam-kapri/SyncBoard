@@ -1,0 +1,62 @@
+.left-body-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.left-body1 {
+  margin-top: 60px;
+  width: 60px;
+  padding: 10px 0;
+  height: max-content;
+  background-color: white;
+  border-radius: 20px;
+  box-shadow: 5px 10px 26px 8px rgba(0, 0, 0, 0.11);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  justify-content: space-around;
+}
+.left-body2 {
+  padding: 10px 0;
+  width: 60px;
+  height: max-content;
+  background-color: white;
+  border-radius: 20px;
+  box-shadow: 5px 10px 26px 8px rgba(0, 0, 0, 0.11);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+}
+.left-body1 div,
+.left-body2 div {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.selected {
+  background-color: rgba(243, 210, 255, 0.5);
+  border-radius: 20px;
+}
+
+.selected svg path {
+  fill: blueviolet;
+}
+.Ai {
+  position: relative;
+}
+.Ai::after {
+  content: "AI";
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  background: rgb(134, 6, 212);
+  padding: 0px 5px;
+  border-radius: 5px;
+  color: white;
+  font-size: 10px;
+}
