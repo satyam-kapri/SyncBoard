@@ -1,9 +1,9 @@
 
-steps:  
-open terminal in vscode without opening any folder
-write=> git clone https://github.com/satyam-kapri/SyncBoard
-then open the folder SyncBoard that is created just now
-.................................................................................
+steps:   
+open terminal in vscode without opening any folder  
+write=> git clone https://github.com/satyam-kapri/SyncBoard  
+then open the folder SyncBoard that is created just now  
+.................................................................................  
 cd mlserver  
 python -m venv venv (only first time)  
 venv/Scripts/activate  
