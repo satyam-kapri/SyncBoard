@@ -22,8 +22,8 @@ services:
   ml:
     build: ./mlserver
     environment:
-      MODEL_PATH: /app/shape_classifier.h5
+      MODEL_PATH: /app/shape_classifier.tflite
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost}
     volumes:
-      - ./mlserver/shape_classifier.h5:/app/shape_classifier.h5:ro
+      - ./mlserver/shape_classifier.tflite:/app/shape_classifier.tflite:ro
     restart: unless-stopped

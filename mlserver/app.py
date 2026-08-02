@@ -1,12 +1,10 @@
 from flask import Flask, request, jsonify
 import os
-import tensorflow as tf
-import numpy as np
-from tensorflow.keras.preprocessing import image
-import io
-from PIL import Image
-from flask_cors import CORS
 import re
+
+from flask_cors import CORS
+
+from inference import ShapePredictor
 
 MODEL_PATH = os.environ.get("MODEL_PATH", "./shape_classifier.h5")
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5173")
@@ -14,22 +12,7 @@ FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5173")
 app = Flask(__name__)
 CORS(app, origins=[FRONTEND_URL])
 
-if not os.path.exists(MODEL_PATH):
-    raise FileNotFoundError(
-        f"Model file not found at {MODEL_PATH}. Run `python train.py` first."
-    )
-
-model = tf.keras.models.load_model(MODEL_PATH)
-class_labels = ["ellipse", "other", "rectangle", "triangle"]
-
-
-def preprocess_image(image_bytes, image_size=(70, 70)):
-    img = Image.open(io.BytesIO(image_bytes))
-    img = img.convert("L")
-    img = img.resize(image_size)
-    img_array = image.img_to_array(img) / 255.0
-    img_array = np.expand_dims(img_array, axis=0)
-    return img_array
+predictor = ShapePredictor(MODEL_PATH)
 
 
 @app.route("/predict", methods=["POST"])
@@ -39,17 +22,8 @@ def predict():
             return jsonify({"error": "No file provided"}), 400
 
         file = request.files["image"]
-        preprocessed_image = preprocess_image(file.read())
-        predictions = model.predict(preprocessed_image)
-        class_idx = np.argmax(predictions, axis=1)
-        predicted_class = class_labels[class_idx[0]]
-        confidence = predictions[0][class_idx[0]]
-
-        response = {
-            "shape": predicted_class,
-            "confidence": float(confidence),
-        }
-        return jsonify(response), 200
+        result = predictor.predict(file.read())
+        return jsonify(result), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -98,4 +72,4 @@ def extract_shape():
 
 @app.route("/health", methods=["GET"])
 def health():
-    return jsonify({"status": "ok"}), 200
+    return jsonify({"status": "ok", "model": MODEL_PATH}), 200

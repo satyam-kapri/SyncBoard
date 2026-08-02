@@ -2,18 +2,12 @@ FROM python:3.11-slim-bookworm
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    libgl1 \
-    libglib2.0-0 \
-    libgomp1 \
-    && rm -rf /var/lib/apt/lists/*
-
 COPY requirements-docker.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY app.py ./
+COPY app.py inference.py ./
 
-ENV MODEL_PATH=/app/shape_classifier.h5
+ENV MODEL_PATH=/app/shape_classifier.tflite
 
 EXPOSE 5000
 

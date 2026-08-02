@@ -40,17 +40,19 @@ Everything runs via **Docker Compose** — no shell scripts, no domain required.
 
 | Instance | RAM | Good for |
 |----------|-----|----------|
-| **t3.medium** (recommended) | 4 GB | Running all 3 containers with inference |
-| t3.small | 2 GB | May run out of memory (TensorFlow is heavy) |
-| t3.large | 8 GB | Only needed if you train the model on the EC2 instance |
+| **t3.small** | 2 GB | Demo OK — Docker uses TFLite (~50 MB), not full TensorFlow |
+| t3.medium | 4 GB | Comfortable headroom |
+| t3.large | 8 GB | Only if you train the model on EC2 |
 
-Train the model on your laptop once, then copy `mlserver/shape_classifier.h5` to the server.
+**Disk:** use at least **15 GB** root volume. Default 8 GB Ubuntu AMIs often run out of space during `docker compose build`.
+
+Train the model on your laptop once, then copy `mlserver/shape_classifier.tflite` to the server (a few MB).
 
 ### 1. Launch EC2
 
 - **AMI:** Ubuntu 22.04 LTS
-- **Instance type:** `t3.medium`
-- **Storage:** 20 GB
+- **Instance type:** `t3.small` or `t3.medium`
+- **Storage:** **15 GB minimum** (20 GB recommended)
 - **Security group inbound:**
   - SSH (22) — your IP
   - HTTP (80) — `0.0.0.0/0`
@@ -69,20 +71,22 @@ Log out and back in so the `docker` group applies.
 
 ### 3. Train the model (once, on your machine)
 
-If you don't already have `mlserver/shape_classifier.h5`:
+If you don't already have `mlserver/shape_classifier.tflite`:
 
 ```bash
 cd mlserver
 python -m venv venv && source venv/bin/activate   # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-python train.py
+python train.py   # creates shape_classifier.h5 and shape_classifier.tflite
 ```
 
-Copy `shape_classifier.h5` to the EC2 instance (or commit it to a private repo / scp it):
+Copy the **`.tflite`** file to EC2 (much smaller than the `.h5`):
 
 ```bash
-scp mlserver/shape_classifier.h5 ubuntu@YOUR_EC2_IP:~/SyncBoard/mlserver/
+scp mlserver/shape_classifier.tflite ubuntu@YOUR_EC2_IP:~/SyncBoard/mlserver/
 ```
+
+If you only have an older `.h5` file, re-run `python train.py` locally to generate the `.tflite`, or convert manually with TensorFlow.
 
 ### 4. Clone and configure
 
@@ -131,5 +135,17 @@ Frontend build uses same-origin URLs (`/ml`, current host for Socket.io), so no 
 ### Notes for demo
 
 - **No HTTPS** — fine for a demo over HTTP. Browser voice recognition may not work without HTTPS; drawing and shape detection still work.
-- **Model file** must exist at `mlserver/shape_classifier.h5` before starting (mounted into the ML container).
-- If the ML container keeps restarting, check logs: `docker compose logs ml`. Usually means the model file is missing or the instance is too small.
+- **Model file** must exist at `mlserver/shape_classifier.tflite` before starting.
+- If the build fails with **no space left on device**, free Docker cache then rebuild:
+
+```bash
+docker system prune -af
+docker compose up -d --build
+```
+
+If still tight on disk, expand the EBS volume in AWS (EC2 → Storage → Increase volume size), then on the instance:
+
+```bash
+sudo growpart /dev/nvme0n1 1
+sudo resize2fs /dev/nvme0n1p1
+```

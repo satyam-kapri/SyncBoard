@@ -106,3 +106,9 @@ print(f"Test Accuracy: {test_accuracy:.2f}")
 
 # Save the trained model
 model.save("shape_classifier.h5")
+
+converter = tf.lite.TFLiteConverter.from_keras_model(model)
+tflite_model = converter.convert()
+with open("shape_classifier.tflite", "wb") as f:
+    f.write(tflite_model)
+print("Saved shape_classifier.h5 and shape_classifier.tflite")
