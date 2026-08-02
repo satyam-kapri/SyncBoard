@@ -3,7 +3,6 @@ venv
 shapes_dataset
 datagenerator.py
 shape_classifier.h5
-shape_classifier.tflite
 shape_classifier_model.h5
 shape_classifier2.h5
 .env
