@@ -1,0 +1,29 @@
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.nginx
+    ports:
+      - "80:80"
+    depends_on:
+      node:
+        condition: service_started
+      ml:
+        condition: service_started
+    restart: unless-stopped
+
+  node:
+    build: ./nodeserver
+    environment:
+      PORT: 3001
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost}
+    restart: unless-stopped
+
+  ml:
+    build: ./mlserver
+    environment:
+      MODEL_PATH: /app/shape_classifier.h5
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost}
+    volumes:
+      - ./mlserver/shape_classifier.h5:/app/shape_classifier.h5:ro
+    restart: unless-stopped

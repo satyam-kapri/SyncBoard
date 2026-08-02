@@ -56,3 +56,4 @@ zope.event==5.0
 zope.interface==7.1.1
 kagglehub
 scikit-learn==1.6.1
+gunicorn==23.0.0

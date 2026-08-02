@@ -1,4 +1,5 @@
 import axios from "axios";
+import { ML_API_URL } from "../config";
 import { useCanvas } from "../context/canvas";
 import { useState, useRef, useEffect } from "react";
 import { useSocket } from "../context/socketcontext";
@@ -299,7 +300,7 @@ const FreehandCanvas = ({ tool, strokeValue, AiFeature }) => {
 
       // Axios POST request
       const response = await axios.post(
-        "http://127.0.0.1:5000/predict",
+        `${ML_API_URL}/predict`,
         formData,
         {
           headers: {

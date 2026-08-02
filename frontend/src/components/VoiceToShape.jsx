@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import { useCanvas } from "../context/canvas";
 import voiceWave from "../assets/wave.gif";
 import axios from "axios";
+import { ML_API_URL } from "../config";
 const VoiceToShape = () => {
   const { canvasRef } = useCanvas();
   const ctxRef = useRef(null);
@@ -41,7 +42,7 @@ const VoiceToShape = () => {
   };
 
   const handleSubmit = async (text) => {
-    const response = await axios.post("http://127.0.0.1:5000/extract-shape", {
+    const response = await axios.post(`${ML_API_URL}/extract-shape`, {
       text: text,
     });
     console.log("ok");

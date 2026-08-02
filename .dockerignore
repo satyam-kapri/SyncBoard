@@ -1,0 +1,10 @@
+**/.git
+**/.env
+**/.env.local
+**/node_modules
+**/venv
+**/__pycache__
+**/dist
+mlserver/shapes_dataset
+*.md
+!README.md

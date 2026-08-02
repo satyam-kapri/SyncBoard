@@ -1,9 +1,10 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import io from "socket.io-client";
+import { SOCKET_URL } from "../config";
 
 const SocketContext = createContext();
 
-const socket = io.connect("http://localhost:3001", {
+const socket = io.connect(SOCKET_URL, {
   transports: ["websocket"],
   withCredentials: true,
 });

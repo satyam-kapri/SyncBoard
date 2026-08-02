@@ -105,4 +105,4 @@ print(f"Test Accuracy: {test_accuracy:.2f}")
 
 
 # Save the trained model
-model.save('shape_classifier2.h5')
+model.save("shape_classifier.h5")
