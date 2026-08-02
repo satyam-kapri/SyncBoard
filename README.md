@@ -1,4 +1,4 @@
-# SyncBoard(http://http://13.201.132.182/)
+# SyncBoard(http://13.201.132.182/)
 
 Collaborative whiteboard with real-time sync, AI shape recognition, and voice-to-shape.
 
