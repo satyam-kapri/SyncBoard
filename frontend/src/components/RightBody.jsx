@@ -20,8 +20,7 @@ function RightBody() {
     if (e.key === "Enter") {
       sendMessage();
     } else {
-      // Notify others that user is typing
-      if (!isTyping) {
+      if (!isTyping && socket) {
         socket.emit("typing", { room, username, isTyping: true });
         setIsTyping(true);
       }
@@ -29,7 +28,7 @@ function RightBody() {
   };
 
   const handleBlur = () => {
-    if (isTyping) {
+    if (isTyping && socket) {
       socket.emit("typing", { room, username, isTyping: false });
       setIsTyping(false);
     }
@@ -38,10 +37,13 @@ function RightBody() {
   return (
     <div className="Right-Body">
       <div className="Chat-Header">
-        <h3>Meeting Chat - Room: {room}</h3>
-        {/* <div className="online-users">
-          <span>Users online: {typingUsers.length}</span>
-        </div> */}
+        <div className="chat-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+          </svg>
+          <span>Room Chat</span>
+          <span className="room-name">#{room || "general"}</span>
+        </div>
       </div>
       <div className="Chat-Body">
         <div className="chat-box">
@@ -54,10 +56,12 @@ function RightBody() {
                   <div className="message-header">
                     <strong className="sender">{msg.sender}</strong>
                     <span className="timestamp">
-                      {new Date(msg.timestamp).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
+                      {msg.timestamp
+                        ? new Date(msg.timestamp).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
+                        : ""}
                     </span>
                   </div>
                   <div className="message-content">{msg.content}</div>
@@ -66,7 +70,7 @@ function RightBody() {
             </div>
           ))}
           <div className="typing-indicator">
-            {typingUsers.length > 0 && (
+            {typingUsers && typingUsers.length > 0 && (
               <span>
                 {typingUsers.join(", ")}{" "}
                 {typingUsers.length === 1 ? "is" : "are"} typing...
@@ -84,17 +88,10 @@ function RightBody() {
             placeholder="Type a message..."
             maxLength={500}
           />
-          <button onClick={sendMessage} disabled={!message.trim()}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-            >
-              <path
-                fill="currentColor"
-                d="m21.426 11.095l-17-8A1 1 0 0 0 3.03 4.242l1.212 4.849L12 12l-7.758 2.909l-1.212 4.849a.998.998 0 0 0 1.396 1.147l17-8a1 1 0 0 0 0-1.81"
-              />
+          <button onClick={sendMessage} disabled={!message.trim()} title="Send Message">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="22" y1="2" x2="11" y2="13" />
+              <polygon points="22 2 15 22 11 13 2 9 22 2" />
             </svg>
           </button>
         </div>

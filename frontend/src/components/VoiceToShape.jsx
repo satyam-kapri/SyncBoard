@@ -1,180 +1,168 @@
 import React, { useRef, useState } from "react";
 import { useCanvas } from "../context/canvas";
-import voiceWave from "../assets/wave.gif";
 import axios from "axios";
 import { ML_API_URL } from "../config";
+
 const VoiceToShape = () => {
-  const { canvasRef } = useCanvas();
-  const ctxRef = useRef(null);
+  const { elements, setElements, saveCanvasState, strokeColor, strokeValue } = useCanvas();
   const recognitionRef = useRef(null);
   const [listening, setListening] = useState(false);
+  const [statusMsg, setStatusMsg] = useState("");
 
   const startListening = () => {
-    if (!ctxRef.current) {
-      ctxRef.current = canvasRef.current.getContext("2d");
+    if (!("SpeechRecognition" in window || "webkitSpeechRecognition" in window)) {
+      alert("Speech recognition is not supported in this browser. Please use Chrome or Edge.");
+      return;
     }
+
     if (!recognitionRef.current) {
-      recognitionRef.current = new (window.SpeechRecognition ||
-        window.webkitSpeechRecognition)();
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
       recognitionRef.current.lang = "en-US";
       recognitionRef.current.interimResults = false;
 
+      recognitionRef.current.onstart = () => {
+        setListening(true);
+        setStatusMsg("Listening... Speak a shape name");
+      };
+
       recognitionRef.current.onresult = (event) => {
-        const transcript =
-          event.results[event.results.length - 1][0].transcript;
-        console.log("Heard:", transcript);
+        const transcript = event.results[event.results.length - 1][0].transcript;
+        console.log("Speech heard:", transcript);
+        setStatusMsg(`Heard: "${transcript}"`);
         handleSubmit(transcript);
       };
 
       recognitionRef.current.onerror = (event) => {
         console.error("Speech recognition error:", event.error);
-        setListening(false); // Disable button if error occurs
+        setStatusMsg("Speech error. Click to retry.");
+        setListening(false);
       };
 
       recognitionRef.current.onend = () => {
-        console.log("Speech recognition stopped.");
-        setListening(false); // Automatically disable button
+        setListening(false);
       };
     }
 
-    recognitionRef.current.start();
-    setListening(true);
+    try {
+      recognitionRef.current.start();
+    } catch (err) {
+      console.warn("Speech recognition already running", err);
+    }
+  };
+
+  const stopListening = () => {
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+      } catch (err) {
+        console.warn("Error stopping recognition:", err);
+      }
+    }
+    setListening(false);
+    setStatusMsg("Stopped recording.");
+    setTimeout(() => setStatusMsg(""), 2000);
+  };
+
+  const toggleListening = () => {
+    if (listening) {
+      stopListening();
+    } else {
+      startListening();
+    }
   };
 
   const handleSubmit = async (text) => {
-    const response = await axios.post(`${ML_API_URL}/extract-shape`, {
-      text: text,
-    });
-    console.log("ok");
-    const shapeData = await response.data;
-    console.log("yes", shapeData);
-    drawShape(shapeData);
+    try {
+      const response = await axios.post(`${ML_API_URL}/extract-shape`, { text });
+      const shapeData = response.data;
+      if (shapeData && shapeData.shape) {
+        addVoiceShape(shapeData);
+        setStatusMsg(`Created ${shapeData.shape}`);
+      } else {
+        setStatusMsg("Could not detect shape in speech");
+      }
+    } catch (error) {
+      console.error("Error in extract-shape ML call:", error);
+      parseVoiceLocal(text);
+    }
   };
 
-  const drawShape = (shapeData) => {
-    console.log(shapeData);
-    if (!shapeData) return;
+  const parseVoiceLocal = (text) => {
+    const txt = text.toLowerCase();
+    let shapeType = "circle";
+    if (txt.includes("triangle")) shapeType = "triangle";
+    else if (txt.includes("rectangle") || txt.includes("box")) shapeType = "rectangle";
+    else if (txt.includes("square")) shapeType = "rectangle";
+    else if (txt.includes("line")) shapeType = "line";
 
+    addVoiceShape({ shape: shapeType, width: 140, height: 100, radius: 60, side: 100 });
+    setStatusMsg(`Created ${shapeType}`);
+  };
+
+  const addVoiceShape = (shapeData) => {
     const { shape } = shapeData;
-    console.log(shape);
-    let ctx = ctxRef.current;
-    ctx.strokeStyle = "black";
-    switch (shape) {
-      case "line":
-        ctx.beginPath();
-        ctx.moveTo(300, 300);
-        ctx.lineTo(50 + shapeData.length, 50);
-        ctx.stroke();
-        break;
+    const centerX = 350 + Math.floor(Math.random() * 80);
+    const centerY = 200 + Math.floor(Math.random() * 80);
 
-      case "square":
-        ctx.strokeRect(300, 300, shapeData.side, shapeData.side);
-        break;
-
-      case "rectangle":
-        ctx.strokeRect(300, 300, shapeData.width, shapeData.height);
-        break;
-
-      case "circle":
-        ctx.beginPath();
-        ctx.arc(300, 300, shapeData.radius, 0, 2 * Math.PI);
-        ctx.stroke();
-        break;
-
-      case "hexagon":
-        drawHexagon(ctx, 300, 300, shapeData.side);
-        break;
-
-      case "pentagon":
-        drawPentagon(ctx, 300, 300, shapeData.side);
-        break;
-
-      case "parallelogram":
-        drawParallelogram(ctx, 300, 300, shapeData.base, shapeData.height);
-        break;
-
-      default:
-        console.log("Unsupported shape");
+    let w = shapeData.width || shapeData.side || shapeData.radius * 2 || 120;
+    let h = shapeData.height || shapeData.side || shapeData.radius * 2 || 120;
+    if (shape === "circle") {
+      const r = shapeData.radius || 60;
+      w = r * 2;
+      h = r * 2;
     }
-  };
 
-  const drawHexagon = (ctx, x, y, side) => {
-    ctx.strokeStyle = "black";
-    ctx.beginPath();
-    for (let i = 0; i < 6; i++) {
-      const angle = (i * 2 * Math.PI) / 6;
-      ctx.lineTo(x + side * Math.cos(angle), y + side * Math.sin(angle));
-    }
-    ctx.closePath();
-    ctx.stroke();
-  };
+    const newEl = {
+      id: "voice-" + Date.now(),
+      type: shape === "square" ? "rectangle" : shape,
+      x: centerX,
+      y: centerY,
+      width: w,
+      height: h,
+      strokeColor: strokeColor || "rgba(134, 6, 212, 1)",
+      fillColor: "transparent",
+      strokeWidth: strokeValue || 3,
+    };
 
-  const drawPentagon = (ctx, x, y, side) => {
-    ctx.strokeStyle = "black";
-    ctx.beginPath();
-    for (let i = 0; i < 5; i++) {
-      const angle = (i * 2 * Math.PI) / 5;
-      ctx.lineTo(x + side * Math.cos(angle), y + side * Math.sin(angle));
-    }
-    ctx.closePath();
-    ctx.stroke();
-  };
-
-  const drawParallelogram = (ctx, x, y, base, height) => {
-    ctx.strokeStyle = "black";
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.lineTo(x + base, y);
-    ctx.lineTo(x + base + 20, y + height);
-    ctx.lineTo(x + 20, y + height);
-    ctx.closePath();
-    ctx.stroke();
+    const updated = [...elements, newEl];
+    setElements(updated);
+    saveCanvasState(updated);
   };
 
   return (
-    <div>
-      {/* <h2>
-            🎤 Click the button and say: "Draw a rectangle 200 by 100" or "Create a
-            circle with radius 50"
-        </h2> */}
+    <div className="dedicated-voice-bar">
+      {/* Primary Voice Action Button */}
       <button
-        onClick={startListening}
-        disabled={listening}
-        style={{
-          position: "fixed",
-          bottom: 10,
-          background: "white",
-          color: "black",
-          width: 70,
-          height: 60,
-          boxShadow: "5px 10px 26px 8px rgba(0, 0, 0, 0.11)",
-          //   border: "2px dashed red",
-        }}
+        onClick={toggleListening}
+        className={`voice-bar-btn ${listening ? "recording" : ""}`}
+        title={listening ? "Click to Stop Recording" : "Voice AI: Click & speak e.g. 'Draw a circle'"}
       >
-        {listening ? (
-          <img src={voiceWave} width={30} height={30}></img>
-        ) : (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="30"
-            height="30"
-            viewBox="0 0 21 21"
-          >
-            <g
-              fill="none"
-              fill-rule="evenodd"
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="1"
-            >
-              <path d="m10.39 2.615l.11-.004a2.893 2.893 0 0 1 3 2.891V9.5a3 3 0 1 1-6 0V5.613a3 3 0 0 1 2.89-2.998" />
-              <path d="M15.5 9.5a5 5 0 0 1-9.995.217L5.5 9.5m5 5v4" />
-            </g>
-          </svg>
-        )}
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+          <line x1="12" y1="19" x2="12" y2="23" />
+          <line x1="8" y1="23" x2="16" y2="23" />
+        </svg>
+        <span>{listening ? "Recording..." : "Voice Control"}</span>
       </button>
-      <br />
+
+      {/* Explicit Stop Recording Button when listening */}
+      {listening && (
+        <button onClick={stopListening} className="voice-stop-btn" title="Stop Recording">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+            <rect x="4" y="4" width="16" height="16" rx="2" />
+          </svg>
+          Stop
+        </button>
+      )}
+
+      {/* Live Speech Feedback Text */}
+      {statusMsg && (
+        <span className="voice-bar-status">
+          {statusMsg}
+        </span>
+      )}
     </div>
   );
 };

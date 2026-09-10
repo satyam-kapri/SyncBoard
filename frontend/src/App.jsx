@@ -1,53 +1,43 @@
+import React from "react";
 import LeftHeader from "./components/LeftHeader";
 import RightHeader from "./components/RightHeader";
 import LeftBody from "./components/LeftBody";
 import RightBody from "./components/RightBody";
-import "./App.css";
 import FreehandCanvas from "./components/Canvas";
-import { useState } from "react";
 import VoiceToShape from "./components/VoiceToShape";
 import Socket from "./components/socket";
 import { useSocket } from "./context/socketcontext";
+import "./App.css";
 
 function App() {
-  const [selectedTool, setSelectedTool] = useState("");
-  const [strokeValue, setStrokeValue] = useState(2);
-  const [AiFeature, setAiFeature] = useState(false);
   const { joined } = useSocket();
 
   return (
-    <>
+    <div className="app-main-wrapper">
       {!joined ? (
         <Socket />
       ) : (
-        <div>
-          <div id="header">
+        <div className="workspace-container">
+          {/* Top Bar Navigation Header */}
+          <header id="header">
             <LeftHeader />
-            <RightHeader />
-          </div>
-
-          <div id="body">
-            <LeftBody
-              selectedTool={selectedTool}
-              setSelectedTool={setSelectedTool}
-              setStrokeValue={setStrokeValue}
-              strokeValue={strokeValue}
-              AiFeature={AiFeature}
-              setAiFeature={setAiFeature}
-            />
-            <div className="middle-body">
-              <FreehandCanvas
-                tool={selectedTool}
-                strokeValue={strokeValue}
-                AiFeature={AiFeature}
-              />
+            <div className="header-right-group">
               <VoiceToShape />
+              <RightHeader />
+            </div>
+          </header>
+
+          {/* Main Whiteboard Workspace Body */}
+          <main id="body">
+            <LeftBody />
+            <div className="middle-body">
+              <FreehandCanvas />
             </div>
             <RightBody />
-          </div>
+          </main>
         </div>
       )}
-    </>
+    </div>
   );
 }
 

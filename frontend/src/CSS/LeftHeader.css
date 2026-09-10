@@ -1,10 +1,90 @@
-#left-header{
-    border-radius: 10px;
-    background-color: white;
-    box-shadow: 11px 7px 48px 7px rgba(0, 0, 0, 0.11);
-    padding: 10px 80px;
-    font-family: "Londrina Solid", sans-serif;
-    font-size: 32px;
-    margin-left: 50px;
+#left-header {
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  padding: 4px 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: 12px;
+  border: 1px solid #e2e8f0;
+}
 
+.room-badge {
+  background: rgba(134, 6, 212, 0.08);
+  color: rgba(134, 6, 212, 1);
+  font-size: 0.72rem;
+  padding: 2px 8px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+}
+
+.live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #22c55e;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.grid-selector {
+  display: flex;
+  background: #f1f5f9;
+  padding: 2px;
+  border-radius: 6px;
+}
+
+.grid-selector button {
+  border: none;
+  background: transparent;
+  padding: 3px 8px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #64748b;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.grid-selector button.active {
+  background: #ffffff;
+  color: rgba(134, 6, 212, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.icon-header-btn {
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.icon-header-btn:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.icon-header-btn.danger {
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+.icon-header-btn.danger:hover {
+  background: #fef2f2;
 }

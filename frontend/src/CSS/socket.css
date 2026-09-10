@@ -1,20 +1,214 @@
-.container {
-  width: 94vw;
-  display: grid;
-  place-items: center;
+.landing-page {
+  min-height: 100vh;
+  width: 100vw;
+  background: #f8fafc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px 16px;
+  box-sizing: border-box;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
-.room-container {
-  width: 41%;
+
+.landing-container {
+  max-width: 900px;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  height: 300px;
-  justify-content: space-around;
+  align-items: center;
+  gap: 24px;
 }
-.room-container input {
-  padding: 1rem;
-  border-radius: 10px;
+
+.landing-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
 }
-.room-container button {
-  background-color: blueviolet;
-  color: white;
+
+.landing-subtitle {
+  color: #64748b;
+  font-size: 0.9rem;
+  max-width: 500px;
+  margin: 0;
+  line-height: 1.4;
+  font-weight: 400;
+}
+
+.landing-content {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 24px;
+  width: 100%;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .landing-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+.join-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-badge {
+  align-self: flex-start;
+  background: rgba(134, 6, 212, 0.08);
+  color: rgba(134, 6, 212, 1);
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.join-card h2 {
+  margin: 0 0 4px 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.form-group {
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+}
+
+.form-group label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.quick-room-btn {
+  background: none;
+  border: none;
+  color: rgba(134, 6, 212, 1);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.quick-room-btn:hover {
+  text-decoration: underline;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 10px;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+.input-wrapper input {
+  width: 100%;
+  padding: 8px 10px 8px 34px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  font-size: 0.85rem;
+  color: #0f172a;
+  outline: none;
+  transition: all 0.15s ease;
+  box-sizing: border-box;
+}
+
+.input-wrapper input:focus {
+  border-color: rgba(134, 6, 212, 1);
+  background: #ffffff;
+}
+
+.join-submit-btn {
+  margin-top: 6px;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(134, 6, 212, 1);
+  color: #ffffff;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.join-submit-btn:hover:not(:disabled) {
+  background: #7305b5;
+}
+
+.join-submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Feature Cards Grid */
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 600px) {
+  .feature-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.feature-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 14px;
+  text-align: left;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+}
+
+.feature-icon-wrapper {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.feature-icon-wrapper.purple { background: rgba(134, 6, 212, 0.08); color: rgba(134, 6, 212, 1); }
+.feature-icon-wrapper.blue { background: rgba(2, 132, 199, 0.08); color: #0284c7; }
+.feature-icon-wrapper.green { background: rgba(22, 163, 74, 0.08); color: #16a34a; }
+.feature-icon-wrapper.orange { background: rgba(234, 88, 12, 0.08); color: #ea580c; }
+
+.feature-card h3 {
+  margin: 0 0 4px 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.feature-card p {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #64748b;
+  line-height: 1.4;
 }
